@@ -12,6 +12,18 @@ namespace Sorting
 			val2 = temp;
 		}
 
+		static void reverse(std::vector<T> &arr)
+		{
+			int l = 0, u = arr.size() - 1;
+
+			while (l < u)
+			{
+				swapvals(arr[l], arr[u]);
+				l++;
+				u--;
+			}
+		}
+
 		// quicksort
 		static int partition(std::vector<T> &arr, int l, int r)
 		{
@@ -138,6 +150,70 @@ namespace Sorting
 			{
 				extract_max(heap, size);
 				size--;
+			}
+		}
+
+	};
+
+	template<typename SequenceContainer>
+	class SortingT
+	{
+	public:
+		// Merge sort iterative
+		static void mergesort_i(SequenceContainer &arr)
+		{
+			for (int j = 0; j < arr.size() / 2; j++)	// must do the inner loops size/2 times
+				for (int i = 1; i <= (arr.size() / 2) + 1; i *= 2)
+				for (int m = i; m < arr.size(); m += 2 * i)
+				{
+					int r;
+					((m + i) < arr.size()) ? r = (m + i) : r = arr.size() - 1;
+					merge(arr, (m - i), m, r);
+				}
+		}
+
+	private:
+		// merge sort
+		static void merge(SequenceContainer &arr, int l, int mid, int r)
+		{
+			SequenceContainer left, right;				// two sub-lists
+
+			for (int i = l; i <= mid; i++)
+				left.push_back(std::move(arr[i]));				// create left list
+			for (int i = mid + 1; i <= r; i++)
+				right.push_back(std::move(arr[i]));			// create right list
+
+
+			int index = l, i = 0, j = 0;
+			while (index <= r)						// merge the two lists
+			{
+				if (i == left.size())
+				{
+					if (j != right.size())
+					{
+						arr[index] = std::move(right[j]);
+						j++;
+					}
+				}
+				else if (j == right.size())
+				{
+					if (i != left.size())
+					{
+						arr[index] = std::move(left[i]);
+						i++;
+					}
+				}
+				else if (*left[i] <= *right[j])
+				{
+					arr[index] = std::move(left[i]);
+					i++;
+				}
+				else
+				{
+					arr[index] = std::move(right[j]);
+					j++;
+				}
+				index++;
 			}
 		}
 
